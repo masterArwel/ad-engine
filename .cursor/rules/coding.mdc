@@ -1,0 +1,519 @@
+---
+alwaysApply: true
+---
+
+## 类型定义规范
+
+### 接口定义
+- 优先使用 `interface` 而不是 `type`，除非必须使用联合类型或交叉类型
+- 接口名使用 PascalCase 命名规范
+- 接口必须包含中文注释，说明每个字段的用途
+- 接口字段使用 camelCase 命名规范
+- 接口字段必须指定明确的类型，禁止使用 any
+- 必须为所有的 Props 定义接口
+- 当字段可能为空时，使用可选操作符 `?`
+- 接口定义示例：
+```typescript
+interface UserInfo {
+  userId: string /** 用户ID */;
+  userName: string /** 用户名称 */;
+  age?: number /** 年龄 */;
+}
+```
+
+### 类型转换
+- 字符串转数字优先使用 `+` 操作符，而不是 `parseInt` 或 `Number()`
+- 数字转字符串使用 `String()` 或模板字符串，不使用 `toString()`
+- 布尔值转换优先使用 `!!` 操作符
+- 在使用 `===` 进行大小比较时，必须将两边都转为数字类型
+- 类型转换示例：
+```typescript
+// 正确的做法
+const numValue = +strValue;
+const strValue = String(numValue);
+const boolValue = !!value;
+
+// 比较大小时，两边都要转为数字
+if (+value1 === +value2) {
+  // 相等比较
+}
+if (+leftValue > +rightValue) {
+  // 大小比较
+}
+
+// 错误的做法
+const numValue = parseInt(strValue, 10);
+const strValue = numValue.toString();
+// 错误：比较时没有转换类型
+if (value1 === value2) {
+  // 可能导致类型不一致的比较
+}
+```
+
+### 类型断言
+- 优先使用 `as` 语法而不是尖括号语法
+- 避免使用 `as any`，除非确实无法确定类型
+- 使用 `as const` 来创建只读数据
+- 类型断言示例：
+```typescript
+// 正确的做法
+const user = response as UserInfo;
+const config = {
+  version: '1.0',
+  isDebug: true
+} as const;
+
+// 错误的做法
+const user = <UserInfo>response;
+const data = response as any;
+```
+
+### 枚举类型
+- 使用 `enum` 定义固定的选项值
+- 枚举名使用 PascalCase 命名规范
+- 枚举值使用全大写下划线命名规范
+- 必须包含注释说明每个枚举值的含义
+- 枚举定义示例：
+```typescript
+enum UserStatus {
+  ACTIVE = 1 /** 激活状态 */,
+  INACTIVE = 2 /** 未激活 */,
+  BLOCKED = 3 /** 已封禁 */
+}
+```
+
+### 泛型使用
+- 泛型参数使用有意义的名称，而不是单字母
+- 必要时为泛型参数添加约束
+- 泛型示例：
+```typescript
+interface Response<Data> {
+  code: string;
+  message: string;
+  data: Data;
+}
+
+function fetchData<ResponseData>(): Promise<Response<ResponseData>> {
+  // ...
+}
+```
+
+### 类型保护
+- 使用类型保护缩小类型范围
+- 优先使用 `typeof` 和 `instanceof` 进行类型检查
+- 对于自定义类型，使用类型谓词（type predicates）
+- 类型保护示例：
+```typescript
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+if (isString(value)) {
+  // 这里 value 的类型被收窄为 string
+  console.log(value.length);
+}
+```
+
+### 类型声明文件
+- 将类型定义放在 `.d.ts` 文件中
+- 类型声明文件使用 PascalCase 命名
+- 为第三方库编写类型声明时，使用 `declare` 关键字
+- 类型声明示例：
+```typescript
+// types/api.d.ts
+declare namespace API {
+  interface Response<T> {
+    code: string;
+    message: string;
+    data: T;
+  }
+}
+```
+
+## 最佳实践
+
+### 类型推断
+- 让 TypeScript 自动推断简单类型
+- 显式声明复杂类型和函数返回类型
+- 示例：
+```typescript
+// 让 TS 自动推断简单类型
+const name = 'TypeScript'; // type: string
+const age = 42; // type: number
+
+// 显式声明复杂类型
+const config: Config = {
+  // ...
+};
+
+function calculate(): number {
+  // ...
+}
+```
+
+### 空值处理
+- 使用空值合并运算符 `??` 处理 null/undefined
+- 使用可选链运算符 `?.` 安全访问属性
+- 示例：
+```typescript
+const value = data ?? defaultValue;
+const userName = user?.profile?.name;
+```
+
+### 类型收窄
+- 使用类型收窄来处理联合类型
+- 优先使用 switch 语句进行类型收窄
+- 示例：
+```typescript
+type Status = 'pending' | 'success' | 'error';
+
+function handleStatus(status: Status) {
+  switch (status) {
+    case 'pending':
+      return '处理中';
+    case 'success':
+      return '成功';
+    case 'error':
+      return '失败';
+  }
+}
+```
+
+### 错误处理
+- 使用自定义错误类型
+- 在 try/catch 中正确处理错误类型
+- 示例：
+```typescript
+class APIError extends Error {
+  constructor(public code: string, message: string) {
+    super(message);
+    this.name = 'APIError';
+  }
+}
+
+try {
+  // ...
+} catch (error) {
+  if (error instanceof APIError) {
+    console.error(`API错误: ${error.code}`);
+  }
+}
+```
+
+### 条件类型
+- 使用条件类型创建灵活的类型定义
+- 配合 infer 关键字提取类型
+- 示例：
+```typescript
+type ArrayElement<T> = T extends Array<infer E> ? E : never;
+type StringOrNumber<T> = T extends string ? string : number;
+```
+
+### 工具类型
+- 充分利用 TypeScript 内置的工具类型
+- 创建自定义工具类型时注重复用性
+- 示例：
+```typescript
+type Nullable<T> = T | null;
+type Required<T> = {
+  [P in keyof T]-?: T[P];
+};
+```
+
+## React 组件开发规范
+
+### 组件定义
+- 优先使用函数组件，复杂状态管理使用 Class 组件
+- 组件名使用 PascalCase 命名规范
+- 组件 Props 必须定义 TypeScript 接口
+- 组件示例：
+```typescript
+interface ButtonProps {
+  text: string /** 按钮文字 */;
+  type?: 'primary' | 'default' /** 按钮类型 */;
+  onClick?: () => void /** 点击回调 */;
+  disabled?: boolean /** 是否禁用 */;
+}
+
+const Button: React.FC<ButtonProps> = ({ text, type = 'default', onClick, disabled }) => {
+  return (
+    <button 
+      className={`btn btn-${type}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {text}
+    </button>
+  );
+};
+```
+
+### Class 组件规范
+- 使用 Class 组件时必须正确定义 Props 和 State 接口
+- 生命周期方法按标准顺序排列
+- 事件处理方法使用箭头函数避免 this 绑定问题
+- Class 组件示例：
+```typescript
+interface PageProps {
+  title: string /** 页面标题 */;
+}
+
+interface PageState {
+  loading: boolean /** 加载状态 */;
+  data: any[] /** 页面数据 */;
+}
+
+class PageComponent extends Component<PageProps, PageState> {
+  state: PageState = {
+    loading: false,
+    data: []
+  };
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData = async () => {
+    // 数据获取逻辑
+  };
+
+  handleClick = () => {
+    // 事件处理逻辑
+  };
+
+  render() {
+    return <div>{/* 渲染内容 */}</div>;
+  }
+}
+```
+
+### Hook 使用规范
+- 自定义 Hook 以 `use` 开头命名
+- Hook 必须在组件顶层调用，不能在循环、条件或嵌套函数中调用
+- 自定义 Hook 示例：
+```typescript
+interface UseApiResult<T> {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
+function useApi<T>(url: string): UseApiResult<T> {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await request<T>(url);
+      setData(response.data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '请求失败');
+    } finally {
+      setLoading(false);
+    }
+  }, [url]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
+}
+```
+
+## Antd 组件库使用规范
+
+### 组件使用
+- 优先使用 Antd 组件，避免重复造轮子
+- 按需导入组件，减少打包体积
+- 正确使用组件的 TypeScript 类型
+- 示例：
+```typescript
+import { Button, Table, Form, message } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+
+interface DataItem {
+  id: string;
+  name: string;
+  status: number;
+}
+
+const columns: ColumnsType<DataItem> = [
+  {
+    title: '名称',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    key: 'status',
+    render: (status: number) => status === 1 ? '启用' : '禁用',
+  },
+];
+```
+
+### 表单处理
+- 使用 Antd Form 组件进行表单处理
+- 正确定义表单字段类型
+- 使用 Form.useForm() Hook 管理表单状态
+- 表单示例：
+```typescript
+interface FormValues {
+  username: string;
+  email: string;
+  age: number;
+}
+
+const UserForm: React.FC = () => {
+  const [form] = Form.useForm<FormValues>();
+
+  const onFinish = (values: FormValues) => {
+    console.log('表单提交:', values);
+  };
+
+  return (
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={onFinish}
+    >
+      <Form.Item
+        label="用户名"
+        name="username"
+        rules={[{ required: true, message: '请输入用户名' }]}
+      >
+        <Input />
+      </Form.Item>
+      
+      <Form.Item>
+        <Button type="primary" htmlType="submit">
+          提交
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+```
+
+## Redux 状态管理规范
+
+### Action 创建
+- Action 类型使用常量定义
+- Action Creator 必须有明确的返回类型
+- 使用 TypeScript 联合类型定义 Action
+- 示例参考 project.mdc 中的状态管理规范
+
+### Reducer 编写
+- Reducer 必须是纯函数
+- 使用扩展运算符保持状态不可变性
+- 正确处理所有 Action 类型
+- 示例参考 project.mdc 中的状态管理规范
+
+### Connect 使用
+- 正确定义 mapStateToProps 和 mapDispatchToProps 的类型
+- 使用 connect 高阶组件连接 Redux store
+- 示例：
+```typescript
+import { connect } from 'react-redux';
+import { RootState } from '../store/types';
+
+interface StateProps {
+  data: any[];
+  loading: boolean;
+}
+
+interface DispatchProps {
+  fetchData: () => void;
+}
+
+const mapStateToProps = (state: RootState): StateProps => ({
+  data: state.yourModule.data,
+  loading: state.yourModule.loading,
+});
+
+const mapDispatchToProps: DispatchProps = {
+  fetchData: fetchDataRequest,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(YourComponent);
+```
+
+## Web 项目特有规范
+
+### 路由处理
+- 使用 react-router-dom 进行路由管理
+- 路由组件懒加载使用 React.lazy
+- 路由参数类型化处理
+- 示例：
+```typescript
+import { RouteComponentProps } from 'react-router-dom';
+
+interface RouteParams {
+  id: string;
+}
+
+interface PageProps extends RouteComponentProps<RouteParams> {
+  // 其他 props
+}
+
+const DetailPage: React.FC<PageProps> = ({ match, history }) => {
+  const { id } = match.params;
+  
+  const handleBack = () => {
+    history.goBack();
+  };
+
+  return <div>详情页面 ID: {id}</div>;
+};
+```
+
+### 样式处理
+- 使用 CSS Modules 或 styled-components 避免样式冲突
+- 样式类名使用 BEM 命名规范
+- 响应式设计使用 Antd 的栅格系统
+- 示例：
+```typescript
+import styles from './Component.module.less';
+
+const Component: React.FC = () => {
+  return (
+    <div className={styles['component-container']}>
+      <div className={styles['component-header']}>
+        <h1 className={styles['component-title']}>标题</h1>
+      </div>
+    </div>
+  );
+};
+```
+
+### 性能优化
+- 使用 React.memo 包装纯组件
+- 使用 useMemo 和 useCallback 缓存计算结果和函数
+- 合理使用 React.lazy 进行代码分割
+- 示例：
+```typescript
+const ExpensiveComponent = React.memo<ComponentProps>(({ data }) => {
+  const computedValue = useMemo(() => {
+    return data.reduce((sum, item) => sum + item.value, 0);
+  }, [data]);
+
+  const handleClick = useCallback((id: string) => {
+    // 处理点击事件
+  }, []);
+
+  return <div>计算结果: {computedValue}</div>;
+});
+```
+
+## 代码检查
+- 使用 ESLint 的 TypeScript 插件
+- 启用严格模式 `strict: true`
+- 禁用 `any` 类型 `noImplicitAny: true`
+- 强制使用严格的空值检查 `strictNullChecks: true`
+- 使用 Prettier 保持代码格式一致
+- 配置 husky 和 lint-staged 进行提交前检查

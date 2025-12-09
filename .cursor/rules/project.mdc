@@ -1,0 +1,538 @@
+---
+alwaysApply: true
+---
+
+# 代码工程规范
+**强制承诺**：在编码实施前，我会认真阅读下面的工程规范，掌握项目的层次架构、编写规范及各个模块的逻辑组织，以确保代码编写符合项目规范。
+
+## 1. 项目介绍
+- 这是一个基于 React.js 18.x 构建的微前端基座应用项目，名为 ad-engine(广告引擎微前端基座)
+- 项目基于 qiankun 微前端框架，提供统一的基座应用，支持多个微应用的集成和管理
+- 技术栈：React 18 + TypeScript + Vite + qiankun + React Router DOM
+- 主要依赖：qiankun（微前端框架）、React Router DOM（路由管理）、CSS Variables（主题系统）
+
+## 2. 项目结构
+```
+ad-engine/                         # 微前端基座项目根目录
+├── src/                           # 业务源码目录
+│   ├── assets/                    # 静态资源
+│   ├── components/                # 基座公共组件
+│   │   ├── Layout.tsx             # 主布局组件
+│   │   ├── Layout.css             # 布局样式
+│   │   ├── MicroAppContainer.tsx  # 微应用容器组件
+│   │   └── MicroAppContainer.css  # 微应用容器样式
+│   ├── pages/                     # 基座页面
+│   │   ├── Home.tsx               # 基座首页
+│   │   └── Home.css               # 首页样式
+│   ├── router/                    # React Router 路由配置
+│   │   └── index.tsx              # 路由定义
+│   ├── config/                    # 配置文件
+│   │   ├── microApps.ts           # 微应用配置
+│   │   └── qiankun.ts             # qiankun 配置和初始化
+│   ├── utils/                     # 工具函数
+│   │   └── env.ts                 # 环境变量工具
+│   ├── main.tsx                   # 应用入口
+│   └── index.css                  # 全局样式
+├── scripts/                       # 脚本文件
+│   └── start.sh                   # 启动脚本
+├── public/                        # 静态资源目录
+│   └── index.html                 # HTML模板
+├── dist/                          # 构建输出目录
+├── vite.config.ts                 # Vite构建配置
+├── tsconfig.json                  # TypeScript配置（主配置）
+├── tsconfig.app.json              # TypeScript应用配置
+├── tsconfig.node.json             # TypeScript Node配置
+├── eslint.config.js               # ESLint配置
+├── package.json                   # 项目依赖配置
+├── .gitignore                     # Git忽略文件
+└── README.md                      # 项目说明文档
+```
+
+## 3. 文件命名规范
+- **页面文件**：使用 PascalCase（如：`dashboard.tsx`、`login.tsx`、`accountInfo/index.tsx`）
+- **组件文件**：使用 PascalCase（如：`Header.tsx`、`Footer.tsx`、`Modal.tsx`）
+- **组件目录**：使用 PascalCase（如：`Form/`、`PersonalCenter/`、`AccountInfo/`）
+- **路由文件**：使用 kebab-case（如：`account-main.tsx`、`create-account.tsx`、`personal-center.profile.tsx`）
+- **服务文件**：使用 camelCase（如：`auth.ts`、`user.ts`、`accounts.ts`）
+- **工具函数文件**：使用 camelCase（如：`index.ts`、`request.ts`）
+- **样式文件**：使用 `.css` 后缀，与组件文件同名（如：`Footer.css`、`common.css`）
+- **配置文件**：使用 kebab-case（如：`vite.config.ts`、`eslint.config.js`）
+- **TypeScript文件**：使用 `.ts` 或 `.tsx` 后缀（如：`index.ts`、`Component.tsx`）
+
+## 4. 样式开发规范
+- 本项目使用 **CSS** 和 **CSS Variables** 主题系统
+- **强制**：统一使用 px 作为像素单位，基于桌面端 Web 应用开发
+- **强制**：避免全局样式污染，使用局部作用域的样式类名
+- **推荐**：使用 CSS Variables 实现主题切换和样式统一管理
+- **强制**：当盒子设置了padding后，建议设置 `box-sizing: border-box;` 来防止盒子宽度溢出问题
+- **推荐**：使用 CSS 文件与组件同名的方式组织样式
+
+## 5. 页面开发规范
+
+### 5.1 路由配置（React Router DOM）
+#### 5.1.1 路由定义位置：
+- 路由配置：`src/router/index.tsx`
+- 微应用路由：通过 qiankun 自动管理
+
+#### 5.1.2 新增页面路由步骤：
+```typescript
+// 在 src/router/index.tsx 中添加路由
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import Layout from '../components/Layout';
+import Home from '../pages/Home';
+import MicroAppContainer from '../components/MicroAppContainer';
+
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/home" replace />,
+      },
+      {
+        path: 'home',
+        element: <Home />,
+      },
+      {
+        path: 'your-micro-app/*',
+        element: <MicroAppContainer />,
+      },
+    ],
+  },
+]);
+```
+
+### 5.2 页面主文件开发规范
+- **页面组件模板**：React 页面组件请遵循如下规范：
+```typescript
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import './YourPage.css';
+
+interface DataItem {
+  id: string /** 数据ID */;
+  name: string /** 名称 */;
+  status: number /** 状态 */;
+}
+
+const YourPage: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<DataItem[]>([]);
+
+  // 页面初始化
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // 数据请求方法
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      // 基座应用通常不直接请求业务数据
+      // 业务数据由微应用自己管理
+      console.log('基座页面初始化');
+    } catch (error) {
+      console.error('fetchData error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="your-page">
+      <div className="page-header">
+        <h1>页面标题</h1>
+      </div>
+      
+      <div className="page-content">
+        <div className="micro-app-links">
+          <Link to="/vue-app" className="app-link">
+            Vue 微应用
+          </Link>
+          <Link to="/react-app" className="app-link">
+            React 微应用
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default YourPage;
+```
+
+#### 5.2.1 页面开发要求：
+- **React版本**：使用 React 18，支持 Hooks 和函数组件
+- **状态管理**：组件内部状态使用 useState，全局状态使用 qiankun 全局状态管理
+- **基础组件**：使用原生 HTML 元素和自定义组件，避免引入重型 UI 库
+- **微前端通信**：通过 qiankun 的全局状态管理实现基座与微应用的通信
+- **路由**：基于 React Router DOM，支持微应用路由嵌套
+- **类型定义**：所有接口和组件必须定义 TypeScript 类型
+
+### 5.3 页面样式规范
+- **样式文件**：使用 `.css` 后缀，文件名通常与组件同名
+- **样式类名**：建议使用页面模块名作为前缀，避免样式冲突
+- **主题系统**：使用 CSS Variables 实现主题切换
+- **样式示例**：
+```css
+/* YourPage.css */
+.your-page {
+  padding: 24px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.page-header {
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.page-content {
+  /* 内容样式 */
+}
+```
+
+### 5.4 布局组件使用
+- **主布局**：项目使用 Layout 组件（components/Layout.tsx），包含固定头部、导航、底部
+- **微应用容器**：使用 MicroAppContainer 组件作为微应用的挂载点
+- **响应式**：基于 CSS Media Queries 实现响应式布局
+
+## 6. 微前端配置规范
+
+### 6.1 微应用配置 (src/config/microApps.ts)
+- **强制规范**：微应用配置必须严格遵循如下规范：
+```typescript
+/**
+ * 微应用配置接口
+ */
+export interface MicroApp {
+  name: string /** 微应用名称 */;
+  entry: string /** 微应用入口地址 */;
+  container: string /** 微应用挂载容器 */;
+  activeRule: string /** 微应用激活规则 */;
+  props?: Record<string, unknown> /** 传递给微应用的属性 */;
+}
+
+/**
+ * 微应用列表配置
+ */
+export const microApps: MicroApp[] = [
+  {
+    name: 'vue-app',
+    entry: '//localhost:3001',
+    container: '#subapp-viewport',
+    activeRule: '/vue-app',
+    props: {
+      routerBase: '/vue-app',
+    },
+  },
+  {
+    name: 'react-app',
+    entry: '//localhost:3002',
+    container: '#subapp-viewport',
+    activeRule: '/react-app',
+    props: {
+      routerBase: '/react-app',
+    },
+  },
+];
+```
+
+### 6.2 qiankun 配置规范
+- **强制**：必须在 `src/config/qiankun.ts` 中配置 qiankun 初始化
+- **强制**：必须定义全局状态管理接口
+- **强制**：必须配置生命周期钩子
+- **推荐**：根据环境选择不同的微应用配置
+- **强制**：所有配置必须定义 TypeScript 类型
+
+## 7. 全局状态管理规范 (qiankun)
+
+### 7.1 全局状态定义
+```typescript
+// src/config/qiankun.ts
+import { initGlobalState } from 'qiankun';
+
+/**
+ * 全局状态接口
+ */
+export interface GlobalState {
+  user?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+  theme?: 'light' | 'dark';
+  token?: string;
+}
+
+// 初始化全局状态
+const initialState: GlobalState = {
+  user: undefined,
+  theme: 'light',
+  token: undefined,
+};
+
+export const actions = initGlobalState(initialState);
+
+/**
+ * 设置全局状态
+ */
+export function setGlobalState(state: Partial<GlobalState>) {
+  actions.setGlobalState(state);
+}
+
+/**
+ * 获取全局状态
+ */
+export function getGlobalState(): GlobalState {
+  return actions.getGlobalState();
+}
+
+/**
+ * 监听全局状态变化
+ */
+export function onGlobalStateChange(callback: (state: GlobalState, prev: GlobalState) => void) {
+  return actions.onGlobalStateChange(callback, true);
+}
+```
+
+### 7.2 组件中使用全局状态
+```typescript
+import React, { useState, useEffect } from 'react';
+import { getGlobalState, setGlobalState, onGlobalStateChange, type GlobalState } from '../config/qiankun';
+
+const YourComponent: React.FC = () => {
+  const [globalState, setGlobalStateLocal] = useState<GlobalState>(getGlobalState());
+
+  useEffect(() => {
+    // 监听全局状态变化
+    const unsubscribe = onGlobalStateChange((state, prev) => {
+      console.log('Global state changed:', state, prev);
+      setGlobalStateLocal(state);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleThemeToggle = () => {
+    const newTheme = globalState.theme === 'light' ? 'dark' : 'light';
+    setGlobalState({ theme: newTheme });
+  };
+
+  return (
+    <div>
+      <p>当前主题：{globalState.theme}</p>
+      <button onClick={handleThemeToggle}>切换主题</button>
+    </div>
+  );
+};
+```
+
+### 7.3 状态管理要求
+- **推荐**：优先使用组件内部 useState 管理状态，全局状态仅用于基座与微应用通信
+- **强制**：全局状态必须定义完整的 TypeScript 类型
+- **强制**：状态变更必须通过 setGlobalState 方法
+- **推荐**：在组件卸载时取消状态监听，避免内存泄漏
+
+## 8. 微应用生命周期管理
+
+### 8.1 生命周期钩子配置
+```typescript
+// src/config/qiankun.ts
+const lifeCycles = {
+  beforeLoad: (app: any) => {
+    console.log('[LifeCycle] before load %c%s', 'color: green;', app.name);
+  },
+  beforeMount: (app: any) => {
+    console.log('[LifeCycle] before mount %c%s', 'color: green;', app.name);
+  },
+  afterUnmount: (app: any) => {
+    console.log('[LifeCycle] after unmount %c%s', 'color: green;', app.name);
+  },
+};
+```
+
+### 8.2 微应用错误处理
+```typescript
+// 微应用加载错误处理
+const handleMicroAppError = (error: Error, app: any) => {
+  console.error(`微应用 ${app.name} 加载失败:`, error);
+  
+  // 显示错误状态
+  const errorContainer = document.getElementById('micro-app-error');
+  if (errorContainer) {
+    errorContainer.style.display = 'block';
+  }
+  
+  // 隐藏加载状态
+  const loadingContainer = document.getElementById('micro-app-loading');
+  if (loadingContainer) {
+    loadingContainer.style.display = 'none';
+  }
+};
+```
+
+### 8.3 生命周期管理要求
+- **强制**：必须配置完整的生命周期钩子
+- **推荐**：在生命周期钩子中添加日志记录
+- **强制**：必须处理微应用加载失败的情况
+- **推荐**：提供友好的错误提示和重试机制
+
+## 9. 工程化操作
+
+### 9.1 项目开发
+#### 9.1.1 安装依赖
+```bash
+npm install
+```
+
+#### 9.1.2 项目启动
+本地开发命令：
+```bash
+# 开发环境（默认开发环境）
+npm run dev
+```
+
+#### 9.1.3 项目构建
+```bash
+# 构建生产版本（使用Vite）
+npm run build
+```
+
+### 9.2 开发工具配置
+- **路径别名**：项目已配置路径映射，可以使用 `@/` 指向 `src/` 目录
+- **热重载**：开发环境支持 Vite HMR，代码修改后自动刷新
+- **构建优化**：使用 Vite 构建工具，支持按需加载、代码分割、压缩等优化策略
+- **多环境配置**：支持 dev、fat、uat、pre、pro 多环境配置
+- **TypeScript**：严格模式，确保类型安全
+- **ESLint & Prettier**：代码质量检查和格式化
+
+### 9.3 代码提交规范
+```bash
+# 提交前会自动运行 lint-staged 检查
+git add .
+git commit -m "feat: 新增功能描述"
+
+# 提交信息格式建议遵循 conventional commits 规范
+# feat: 新功能
+# fix: 问题修复  
+# docs: 文档更新
+# style: 代码格式调整
+# refactor: 代码重构
+# test: 测试相关
+# chore: 构建工具或辅助工具的变动
+```
+
+### 9.4 分支管理
+```bash
+# 从主分支创建功能分支
+git checkout -b feature/your-feature-name
+
+# 开发完成后合并到测试分支
+git checkout develop
+git pull origin develop
+git merge feature/your-feature-name
+
+# 测试通过后合并到主分支  
+git checkout main
+git pull origin main
+git merge develop
+```
+> **注意**：当遇到代码合并冲突时，请与团队确认合并策略，切勿强制覆盖！
+
+## 10. 重要技术要点
+
+### 10.1 qiankun 初始化
+```typescript
+// src/main.tsx
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router-dom';
+import { initQiankun } from './config/qiankun';
+import { router } from './router';
+import './index.css';
+
+// 初始化 qiankun
+initQiankun();
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>,
+);
+```
+
+### 10.2 环境变量配置
+```typescript
+// src/utils/env.ts
+export const getAppConfig = () => {
+  return {
+    title: getEnv('VITE_APP_TITLE', '微前端基座应用'),
+    version: getEnv('VITE_APP_VERSION', '1.0.0'),
+    port: getEnv('VITE_DEV_PORT', '3000'),
+    vueAppUrl: getEnv('VITE_VUE_APP_URL', 'http://localhost:3001'),
+    reactAppUrl: getEnv('VITE_REACT_APP_URL', 'http://localhost:3002'),
+  };
+};
+```
+
+### 10.3 路径别名配置
+```typescript
+// vite.config.ts
+resolve: {
+  alias: {
+    '@': path.resolve(__dirname, './src'),
+  },
+}
+
+// tsconfig.app.json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
+```
+
+### 10.4 微应用注册
+```typescript
+// src/config/qiankun.ts
+export function initQiankun() {
+  // 根据环境选择微应用配置
+  const apps = process.env.NODE_ENV === 'development' ? devMicroApps : microApps;
+  
+  // 注册微应用
+  registerMicroApps(
+    apps.map(app => ({
+      ...app,
+      props: {
+        ...app.props,
+        // 传递全局状态管理方法
+        getGlobalState: () => actions.getGlobalState(),
+        setGlobalState: actions.setGlobalState,
+        onGlobalStateChange: actions.onGlobalStateChange,
+      },
+    })),
+    lifeCycles
+  );
+
+  // 启动 qiankun
+  start({
+    sandbox: {
+      strictStyleIsolation: false,
+      experimentalStyleIsolation: true,
+    },
+    prefetch: 'all',
+  });
+}
+```
