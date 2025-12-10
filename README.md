@@ -61,9 +61,15 @@ npm run preview
 
 \`\`\`
 ad-engine/
-├── public/                 # 静态资源
+├── packages/              # 工具包目录
+│   └── micro-app-cli/     # 微前端 CLI 工具包
+│       ├── src/           # 工具包源码
+│       ├── bin/           # 命令行入口
+│       ├── examples/      # 使用示例
+│       └── README.md      # 工具包文档
+├── public/                # 静态资源
 ├── src/
-│   ├── components/         # 通用组件
+│   ├── components/        # 通用组件
 │   │   ├── Layout.tsx     # 主布局组件
 │   │   └── MicroAppContainer.tsx  # 微应用容器
 │   ├── config/            # 配置文件
@@ -73,10 +79,13 @@ ad-engine/
 │   │   └── Home.tsx       # 首页
 │   ├── router/            # 路由配置
 │   │   └── index.tsx      # 路由定义
+│   ├── services/          # API 服务
+│   ├── types/             # 类型定义
 │   ├── utils/             # 工具函数
-│   │   └── env.ts         # 环境变量工具
 │   ├── main.tsx           # 应用入口
 │   └── index.css          # 全局样式
+├── scripts/               # 自动化脚本
+├── docs/                  # 项目文档
 ├── package.json
 ├── vite.config.ts         # Vite 配置
 ├── tsconfig.json          # TypeScript 配置
@@ -137,28 +146,79 @@ export const router = createBrowserRouter([
 ]);
 \`\`\`
 
+## 🔧 微前端 CLI 工具包
+
+本项目包含了一个独立的微前端 CLI 工具包 `@micro-frontend/cli`，提供了强大的微应用创建和管理功能。
+
+### 工具包特性
+
+- 🎨 **交互式界面** - 问答形式的配置收集
+- 🔧 **多框架支持** - Vue 3、React 18（Angular 规划中）
+- 🔌 **插件化架构** - 可扩展的框架插件系统
+- ⚙️ **智能配置** - 自动配置路由、状态管理、构建工具
+- 🎯 **qiankun 集成** - 自动配置微前端生命周期
+- 📦 **完整项目** - 生成完整的项目结构和配置
+- 🔗 **自动注册** - 自动更新基座应用配置
+
+### 工具包使用
+
+```bash
+# 进入工具包目录
+cd packages/micro-app-cli
+
+# 查看工具包信息
+node bin/micro-cli.js info
+
+# 创建新应用
+node bin/micro-cli.js create
+
+# 查看帮助
+node bin/micro-cli.js --help
+```
+
+### 编程式使用
+
+```typescript
+import { MicroFrontendCLI, createApp } from '@micro-frontend/cli';
+
+// 快速创建应用
+await createApp();
+
+// 自定义配置
+const cli = new MicroFrontendCLI({
+  defaultOutputDir: 'apps',
+  defaultPortStart: 4000
+});
+
+await cli.createApp();
+```
+
+详细文档请参考：[工具包文档](./packages/micro-app-cli/README.md)
+
 ## 🌐 微应用开发
 
 ### 🎯 CLI 工具快速创建（推荐）
 
-使用交互式 CLI 工具快速创建微应用：
+使用独立的微前端 CLI 工具包快速创建微应用：
 
 \`\`\`bash
 # 启动 CLI 工具
 npm run create-app
 
-# 或者直接运行
-node cli/index.cjs create
+# 或者直接在工具包目录运行
+cd packages/micro-app-cli
+node bin/micro-cli.js create
 \`\`\`
 
-CLI 工具特性：
+CLI 工具包特性：
 - 🎨 **交互式界面** - 问答形式选择配置
-- 🚀 **多技术栈支持** - Vue 3、React、Angular
+- 🚀 **多技术栈支持** - Vue 3、React 18（Angular 规划中）
+- 🔌 **插件化架构** - 支持自定义框架插件
 - ⚙️ **智能配置** - 自动配置路由、状态管理、CSS 预处理器
 - 🔗 **自动集成** - 自动注册到基座应用
 - 📝 **完整项目** - 生成完整的项目结构和配置
 
-详细使用说明请参考：[CLI 工具使用指南](./docs/CLI工具使用指南.md)
+详细使用说明请参考：[工具包文档](./packages/micro-app-cli/README.md)
 
 ### 🛠️ 脚本快速创建
 
@@ -175,7 +235,7 @@ CLI 工具特性：
 ### 📋 管理命令
 
 \`\`\`bash
-# 创建新的微应用
+# 创建新的微应用（使用工具包）
 npm run create-app
 
 # 启动基座应用和所有子应用
@@ -216,6 +276,8 @@ npm install vite-plugin-qiankun react-router-dom
 详细配置步骤请参考：
 - 📖 [微前端子应用集成方案](./docs/微前端子应用集成方案.md)
 - 🚀 [快速开始指南](./docs/快速开始指南.md)
+- 🔧 [CLI 工具包文档](./packages/micro-app-cli/README.md)
+- 📊 [工具包抽象总结](./docs/工具包抽象总结.md)
 
 ## 🔄 状态管理
 

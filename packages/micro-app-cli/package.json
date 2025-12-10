@@ -1,0 +1,74 @@
+{
+  "name": "@micro-frontend/cli",
+  "version": "1.0.0",
+  "description": "A powerful CLI tool for creating micro-frontend applications",
+  "main": "dist/index.js",
+  "bin": {
+    "micro-cli": "bin/micro-cli.js",
+    "mcli": "bin/micro-cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix"
+  },
+  "keywords": [
+    "micro-frontend",
+    "qiankun",
+    "cli",
+    "vue",
+    "react",
+    "angular",
+    "typescript",
+    "vite"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/micro-frontend-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/micro-frontend-cli/issues"
+  },
+  "homepage": "https://github.com/your-username/micro-frontend-cli#readme",
+  "dependencies": {
+    "inquirer": "^8.2.6",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1",
+    "fs-extra": "^11.3.2",
+    "commander": "^14.0.2",
+    "semver": "^7.5.4",
+    "validate-npm-package-name": "^5.0.0",
+    "cross-spawn": "^7.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/inquirer": "^9.0.0",
+    "@types/fs-extra": "^11.0.0",
+    "@types/semver": "^7.5.0",
+    "@types/cross-spawn": "^6.0.0",
+    "@types/validate-npm-package-name": "^4.0.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ]
+}

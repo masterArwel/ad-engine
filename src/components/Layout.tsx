@@ -64,19 +64,19 @@ const Layout: React.FC = () => {
             to="/api-example" 
             className={location.pathname === '/api-example' ? 'active' : ''}
           >
-            API 示例
+            广告投放管理
           </Link>
           <Link 
             to="/vue-app" 
             className={location.pathname.startsWith('/vue-app') ? 'active' : ''}
           >
-            Vue 应用
+            数据报表管理
           </Link>
           <Link 
             to="/react-app" 
             className={location.pathname.startsWith('/react-app') ? 'active' : ''}
           >
-            React 应用
+            创意素材管理
           </Link>
         </nav>
 

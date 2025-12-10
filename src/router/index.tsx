@@ -1,7 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import Home from '../pages/Home';
-import ApiExample from '../pages/ApiExample';
 import MicroAppContainer from '../components/MicroAppContainer';
 
 /**
@@ -19,10 +18,6 @@ export const router = createBrowserRouter([
       {
         path: 'home',
         element: <Home />,
-      },
-      {
-        path: 'api-example',
-        element: <ApiExample />,
       },
       {
         path: 'vue-app/*',
