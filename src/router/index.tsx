@@ -20,6 +20,10 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: 'ad-commercial/*',
+        element: <MicroAppContainer />,
+      },
+      {
         path: 'vue-app/*',
         element: <MicroAppContainer />,
       },

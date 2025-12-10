@@ -103,3 +103,35 @@ input, textarea, select {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* 常驻微应用容器样式 */
+#subapp-viewport {
+  position: fixed;
+  top: 64px; /* 基座头部高度 */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--background-color);
+  z-index: 1000;
+  display: none; /* 默认隐藏 */
+  overflow: auto;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* 微应用激活状态 */
+#subapp-viewport.active {
+  display: block;
+  opacity: 1;
+}
+
+/* 微应用加载状态 */
+#subapp-viewport.loading {
+  display: block;
+  opacity: 0.8;
+}
+
+/* 确保微应用内容正确显示 */
+#subapp-viewport > div {
+  width: 100%;
+  min-height: 100%;
+}

@@ -31,14 +31,28 @@ let currentGlobalState: GlobalState = { ...initialState };
  * qiankun 生命周期钩子
  */
 const lifeCycles = {
-  beforeLoad: async (app: any) => {
-    console.log('[LifeCycle] before load %c%s', 'color: green;', app.name);
+  beforeLoad: async () => {
+    // 微应用加载前的准备工作
   },
-  beforeMount: async (app: any) => {
-    console.log('[LifeCycle] before mount %c%s', 'color: green;', app.name);
+  beforeMount: async (app: { name: string }) => {
+    // 常驻容器应该始终存在
+    const container = document.getElementById('subapp-viewport');
+    if (!container) {
+      throw new Error(`常驻容器 #subapp-viewport 不存在！应用: ${app.name}`);
+    }
+    
+    // 清空容器内容，为新的微应用做准备
+    container.innerHTML = '';
+    // 确保容器可见
+    container.classList.add('loading');
   },
-  afterUnmount: async (app: any) => {
-    console.log('[LifeCycle] after unmount %c%s', 'color: green;', app.name);
+  afterUnmount: async () => {
+    // 清理容器内容，但保持容器存在
+    const container = document.getElementById('subapp-viewport');
+    if (container) {
+      container.innerHTML = '';
+      container.classList.remove('loading', 'active');
+    }
   },
 };
 
@@ -72,13 +86,15 @@ export function initQiankun() {
       experimentalStyleIsolation: true,
     },
     prefetch: 'all',
+    singular: false, // 允许多个微应用同时存在
     fetch: (url, ...args) => {
       // 自定义 fetch 方法，可以添加认证等逻辑
       return window.fetch(url, ...args);
     },
+    // 移除 getPublicPath 配置，使用默认行为
   });
 
-  console.log('🚀 qiankun started');
+  // qiankun 启动完成
 }
 
 /**

@@ -14,8 +14,17 @@ export interface MicroApp {
  */
 export const microApps: MicroApp[] = [
   {
-    name: 'vue-app',
+    name: 'adcommercial',
     entry: '//localhost:3001',
+    container: '#subapp-viewport',
+    activeRule: '/ad-commercial',
+    props: {
+      routerBase: '/ad-commercial',
+    },
+  },
+  {
+    name: 'vue-app',
+    entry: '//localhost:3002',
     container: '#subapp-viewport',
     activeRule: '/vue-app',
     props: {
@@ -24,7 +33,7 @@ export const microApps: MicroApp[] = [
   },
   {
     name: 'react-app',
-    entry: '//localhost:3002',
+    entry: '//localhost:3003',
     container: '#subapp-viewport',
     activeRule: '/react-app',
     props: {
@@ -38,6 +47,15 @@ export const microApps: MicroApp[] = [
  */
 export const devMicroApps: MicroApp[] = [
   {
+    name: 'adcommercial',
+    entry: 'http://localhost:3002',
+    container: '#subapp-viewport',
+    activeRule: '/ad-commercial',
+    props: {
+      routerBase: '/ad-commercial',
+    },
+  },
+  {
     name: 'vue-app',
     entry: 'http://localhost:3001',
     container: '#subapp-viewport',
@@ -48,7 +66,7 @@ export const devMicroApps: MicroApp[] = [
   },
   {
     name: 'react-app',
-    entry: 'http://localhost:3002',
+    entry: 'http://localhost:3003',
     container: '#subapp-viewport',
     activeRule: '/react-app',
     props: {

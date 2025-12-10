@@ -61,8 +61,8 @@ const Layout: React.FC = () => {
             首页
           </Link>
           <Link 
-            to="/api-example" 
-            className={location.pathname === '/api-example' ? 'active' : ''}
+            to="/ad-commercial" 
+            className={location.pathname.startsWith('/ad-commercial') ? 'active' : ''}
           >
             广告投放管理
           </Link>

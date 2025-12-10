@@ -1,35 +1,38 @@
-/* 微应用容器样式 */
+/* 微应用容器组件样式 */
 .micro-app-container {
   position: relative;
   width: 100%;
-  min-height: calc(100vh - 64px - 60px); /* 减去头部和底部高度 */
-  background: var(--bg-primary);
+  height: 100%;
 }
 
-/* 微应用视口 */
-.micro-app-viewport {
-  width: 100%;
-  min-height: inherit;
+/* 加载状态覆盖层 */
+.micro-app-loading-overlay {
+  position: fixed;
+  top: 64px; /* 基座头部高度 */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001; /* 高于微应用容器 */
+  color: var(--text-color);
 }
 
-/* 加载状态 */
-.micro-app-loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  z-index: 1000;
+.micro-app-loading-overlay p {
+  margin-top: 15px;
+  font-size: 1.1em;
 }
 
 .loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
   width: 40px;
   height: 40px;
-  border: 4px solid var(--border-color);
-  border-top: 4px solid var(--button-bg);
-  border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin: 0 auto 16px;
 }
 
 @keyframes spin {
@@ -37,81 +40,51 @@
   100% { transform: rotate(360deg); }
 }
 
-.micro-app-loading p {
-  color: var(--text-secondary);
-  margin: 0;
-  font-size: 14px;
-}
-
-/* 错误状态 */
-.micro-app-error {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+/* 错误状态覆盖层 */
+.micro-app-error-overlay {
+  position: fixed;
+  top: 64px; /* 基座头部高度 */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001; /* 高于微应用容器 */
+  color: var(--error-color);
   text-align: center;
-  z-index: 1000;
 }
 
-.error-content {
-  padding: 32px;
-  border-radius: 8px;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow);
-  max-width: 400px;
+.micro-app-error-overlay h3 {
+  margin-bottom: 10px;
+  color: var(--error-color);
 }
 
-.error-content h3 {
-  color: #dc3545;
-  margin: 0 0 16px;
-  font-size: 18px;
+.micro-app-error-overlay p {
+  margin-bottom: 20px;
 }
 
-.error-content p {
-  color: var(--text-secondary);
-  margin: 0 0 24px;
-  line-height: 1.5;
-}
-
-.retry-btn {
-  background: var(--button-bg);
+.micro-app-error-overlay .retry-btn {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background 0.3s ease;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
 }
 
-.retry-btn:hover {
-  background: var(--button-hover);
+.micro-app-error-overlay .retry-btn:hover {
+  background-color: var(--primary-dark-color);
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .micro-app-container {
-    min-height: calc(100vh - 56px - 60px);
-  }
-  
-  .error-content {
-    margin: 0 16px;
-    padding: 24px;
+  .micro-app-loading-overlay,
+  .micro-app-error-overlay {
+    top: 56px; /* 移动端头部可能更小 */
   }
 }
-
-/* 微应用加载完成后隐藏加载状态 */
-.micro-app-container.loaded .micro-app-loading {
-  display: none;
-}
-
-/* 微应用加载失败时显示错误状态 */
-.micro-app-container.error .micro-app-loading {
-  display: none;
-}
-
-.micro-app-container.error .micro-app-error {
-  display: block !important;
-}
-
