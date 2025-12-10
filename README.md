@@ -12,6 +12,7 @@
 - 🔄 **状态共享** - 基座与微应用间的状态通信
 - 🛣️ **路由管理** - 统一的路由配置和管理
 - 🎯 **样式隔离** - 完善的样式隔离机制
+- 📡 **HTTP 请求** - 基于 axios 的完整请求封装，支持拦截器、错误处理、文件上传等
 
 ## 📦 技术栈
 
@@ -20,6 +21,7 @@
 - **类型系统**: TypeScript 5.x
 - **微前端**: qiankun 2.x
 - **路由**: React Router 6.x
+- **HTTP 客户端**: axios
 - **样式**: CSS3 + CSS Variables
 
 ## 🛠️ 开发环境
@@ -177,6 +179,62 @@ onGlobalStateChange((state, prev) => {
   console.log('状态变化:', state, prev);
 });
 \`\`\`
+
+## 📡 HTTP 请求
+
+项目集成了基于 axios 的完整 HTTP 请求解决方案：
+
+### 基本使用
+
+\`\`\`typescript
+import { authApi, userApi, commonApi } from '@/services';
+
+// 用户登录
+const loginResponse = await authApi.login({
+  username: 'admin',
+  password: '123456'
+});
+
+// 获取用户列表
+const userListResponse = await userApi.getUserList({
+  pageNum: 1,
+  pageSize: 10
+});
+
+// 文件上传
+const uploadResponse = await commonApi.uploadFile(file, (progress) => {
+  console.log('上传进度:', progress + '%');
+});
+\`\`\`
+
+### 自定义请求
+
+\`\`\`typescript
+import { request } from '@/services';
+
+const response = await request({
+  url: '/custom/api',
+  method: 'POST',
+  data: { key: 'value' },
+  headers: { 'Custom-Header': 'value' }
+});
+\`\`\`
+
+### 特性
+
+- ✅ **自动认证** - 自动添加 Authorization 头
+- ✅ **错误处理** - 统一的错误处理和提示
+- ✅ **请求拦截** - 支持请求/响应拦截器
+- ✅ **文件上传** - 支持文件上传和进度监控
+- ✅ **文件下载** - 支持文件下载
+- ✅ **取消请求** - 支持请求取消
+- ✅ **TypeScript** - 完整的类型定义
+
+### API 服务
+
+- **authApi** - 认证相关（登录、登出、获取用户信息等）
+- **userApi** - 用户管理（CRUD、权限管理等）
+- **commonApi** - 通用服务（文件上传下载、字典数据等）
 
 ## 🎨 主题系统
 

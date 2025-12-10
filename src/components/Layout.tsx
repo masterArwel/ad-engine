@@ -61,6 +61,12 @@ const Layout: React.FC = () => {
             首页
           </Link>
           <Link 
+            to="/api-example" 
+            className={location.pathname === '/api-example' ? 'active' : ''}
+          >
+            API 示例
+          </Link>
+          <Link 
             to="/vue-app" 
             className={location.pathname.startsWith('/vue-app') ? 'active' : ''}
           >

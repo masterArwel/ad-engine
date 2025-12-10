@@ -21,19 +21,23 @@ const initialState: GlobalState = {
   token: undefined,
 };
 
-export const actions = initGlobalState(initialState);
+// 初始化全局状态管理
+const globalStateActions = initGlobalState(initialState);
+
+// 保存当前状态的引用
+let currentGlobalState: GlobalState = { ...initialState };
 
 /**
  * qiankun 生命周期钩子
  */
 const lifeCycles = {
-  beforeLoad: (app: any) => {
+  beforeLoad: async (app: any) => {
     console.log('[LifeCycle] before load %c%s', 'color: green;', app.name);
   },
-  beforeMount: (app: any) => {
+  beforeMount: async (app: any) => {
     console.log('[LifeCycle] before mount %c%s', 'color: green;', app.name);
   },
-  afterUnmount: (app: any) => {
+  afterUnmount: async (app: any) => {
     console.log('[LifeCycle] after unmount %c%s', 'color: green;', app.name);
   },
 };
@@ -43,7 +47,8 @@ const lifeCycles = {
  */
 export function initQiankun() {
   // 根据环境选择微应用配置
-  const apps = process.env.NODE_ENV === 'development' ? devMicroApps : microApps;
+  const isDev = import.meta.env.DEV;
+  const apps = isDev ? devMicroApps : microApps;
   
   // 注册微应用
   registerMicroApps(
@@ -52,9 +57,9 @@ export function initQiankun() {
       props: {
         ...app.props,
         // 传递全局状态管理方法
-        getGlobalState: () => actions.getGlobalState(),
-        setGlobalState: actions.setGlobalState,
-        onGlobalStateChange: actions.onGlobalStateChange,
+        getGlobalState,
+        setGlobalState,
+        onGlobalStateChange,
       },
     })),
     lifeCycles
@@ -80,20 +85,26 @@ export function initQiankun() {
  * 设置全局状态
  */
 export function setGlobalState(state: Partial<GlobalState>) {
-  actions.setGlobalState(state);
+  // 更新本地状态引用
+  currentGlobalState = { ...currentGlobalState, ...state };
+  globalStateActions.setGlobalState(state);
 }
 
 /**
  * 获取全局状态
  */
 export function getGlobalState(): GlobalState {
-  return actions.getGlobalState();
+  return currentGlobalState;
 }
 
 /**
  * 监听全局状态变化
  */
 export function onGlobalStateChange(callback: (state: GlobalState, prev: GlobalState) => void) {
-  return actions.onGlobalStateChange(callback, true);
+  return globalStateActions.onGlobalStateChange((state: GlobalState, prev: GlobalState) => {
+    // 更新本地状态引用
+    currentGlobalState = { ...state };
+    callback(state, prev);
+  }, true);
 }
 

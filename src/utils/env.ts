@@ -33,6 +33,9 @@ export const getAppConfig = () => {
     port: getEnv('VITE_DEV_PORT', '3000'),
     vueAppUrl: getEnv('VITE_VUE_APP_URL', 'http://localhost:3001'),
     reactAppUrl: getEnv('VITE_REACT_APP_URL', 'http://localhost:3002'),
+    apiBaseUrl: getEnv('VITE_API_BASE_URL', 'http://localhost:8080/api'),
+    uploadUrl: getEnv('VITE_UPLOAD_URL', 'http://localhost:8080/upload'),
+    wsUrl: getEnv('VITE_WS_URL', 'ws://localhost:8080/ws'),
   };
 };
 

@@ -1,0 +1,226 @@
+/* API 示例页面样式 */
+.api-example {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.page-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.page-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.example-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.example-section {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.example-section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--button-bg);
+  padding-bottom: 8px;
+}
+
+.example-section h3 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin: 16px 0 8px;
+  color: var(--text-primary);
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: inline-block;
+  width: 100px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-group input {
+  width: 200px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--button-bg);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.button-group button {
+  padding: 8px 16px;
+  background: var(--button-bg);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.button-group button:hover:not(:disabled) {
+  background: var(--button-hover);
+}
+
+.button-group button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.user-info {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.user-info p {
+  margin: 4px 0;
+  color: var(--text-secondary);
+}
+
+.user-list {
+  margin-top: 16px;
+}
+
+.user-list table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.user-list th,
+.user-list td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.user-list th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.user-list td {
+  color: var(--text-secondary);
+}
+
+.user-list tr:last-child td {
+  border-bottom: none;
+}
+
+.usage-guide {
+  background: var(--bg-primary);
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.usage-guide pre {
+  background: #f8f9fa;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 12px;
+  margin: 8px 0;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #333;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .api-example {
+    padding: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .form-group label {
+    width: auto;
+  }
+
+  .form-group input {
+    width: 100%;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group button {
+    width: 100%;
+  }
+
+  .user-list {
+    overflow-x: auto;
+  }
+
+  .user-list table {
+    min-width: 500px;
+  }
+
+  .usage-guide pre {
+    font-size: 12px;
+    padding: 8px;
+  }
+}
+
+/* 暗色主题适配 */
+.layout.dark .usage-guide pre {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  border-color: #404040;
+}
+
+

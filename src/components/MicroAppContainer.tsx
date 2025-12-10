@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import './MicroAppContainer.css';
 
 /**
  * 微应用容器组件
  */
-const MicroAppContainer: React.FC = () => {
+const MicroAppContainer = () => {
   const location = useLocation();
   const containerRef = useRef<HTMLDivElement>(null);
 
