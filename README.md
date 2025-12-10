@@ -139,29 +139,83 @@ export const router = createBrowserRouter([
 
 ## 🌐 微应用开发
 
-### 创建微应用
+### 🎯 CLI 工具快速创建（推荐）
 
-1. 在项目根目录创建微应用目录：
+使用交互式 CLI 工具快速创建微应用：
+
 \`\`\`bash
-mkdir micro-apps
-cd micro-apps
+# 启动 CLI 工具
+npm run create-app
+
+# 或者直接运行
+node cli/index.cjs create
+\`\`\`
+
+CLI 工具特性：
+- 🎨 **交互式界面** - 问答形式选择配置
+- 🚀 **多技术栈支持** - Vue 3、React、Angular
+- ⚙️ **智能配置** - 自动配置路由、状态管理、CSS 预处理器
+- 🔗 **自动集成** - 自动注册到基座应用
+- 📝 **完整项目** - 生成完整的项目结构和配置
+
+详细使用说明请参考：[CLI 工具使用指南](./docs/CLI工具使用指南.md)
+
+### 🛠️ 脚本快速创建
+
+使用自动化脚本快速创建子应用：
+
+\`\`\`bash
+# 创建 Vue 子应用
+./scripts/create-subapp.sh my-vue-app vue 3001
+
+# 创建 React 子应用  
+./scripts/create-subapp.sh my-react-app react 3002
+\`\`\`
+
+### 📋 管理命令
+
+\`\`\`bash
+# 创建新的微应用
+npm run create-app
+
+# 启动基座应用和所有子应用
+npm run start:all
+# 或者
+./scripts/start-all.sh
+
+# 停止所有应用
+npm run stop:all
+# 或者
+./scripts/stop-all.sh
+\`\`\`
+
+### 手动创建微应用
+
+1. 创建子应用目录：
+\`\`\`bash
+mkdir -p sub-apps
+cd sub-apps
 \`\`\`
 
 2. 创建 Vue 微应用：
 \`\`\`bash
 npm create vue@latest vue-app
 cd vue-app
-npm install
+npm install vite-plugin-qiankun
 \`\`\`
 
-3. 配置微应用的 qiankun 生命周期（参考 qiankun 官方文档）
+3. 创建 React 微应用：
+\`\`\`bash
+npm create vite@latest react-app -- --template react-ts
+cd react-app
+npm install vite-plugin-qiankun react-router-dom
+\`\`\`
 
-### 微应用接入
+### 微应用配置
 
-1. 在微应用中安装 qiankun 相关依赖
-2. 导出 qiankun 生命周期函数
-3. 在基座应用的 \`microApps.ts\` 中注册微应用
-4. 启动微应用开发服务器
+详细配置步骤请参考：
+- 📖 [微前端子应用集成方案](./docs/微前端子应用集成方案.md)
+- 🚀 [快速开始指南](./docs/快速开始指南.md)
 
 ## 🔄 状态管理
 
