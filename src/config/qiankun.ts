@@ -1,24 +1,26 @@
 import { registerMicroApps, start, initGlobalState } from 'qiankun';
 import { microApps, devMicroApps } from './microApps';
+import type { AuthState } from '../types/auth';
 
 /**
  * 全局状态管理
  */
 export interface GlobalState {
-  user?: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
+  /** 认证状态 */
+  auth: AuthState;
+  /** 主题设置 */
   theme?: 'light' | 'dark';
-  token?: string;
 }
 
 // 初始化全局状态
 const initialState: GlobalState = {
-  user: undefined,
+  auth: {
+    isAuthenticated: false,
+    user: null,
+    token: null,
+    loading: false,
+  },
   theme: 'light',
-  token: undefined,
 };
 
 // 初始化全局状态管理
@@ -117,10 +119,10 @@ export function getGlobalState(): GlobalState {
  * 监听全局状态变化
  */
 export function onGlobalStateChange(callback: (state: GlobalState, prev: GlobalState) => void) {
-  return globalStateActions.onGlobalStateChange((state: GlobalState, prev: GlobalState) => {
+  return globalStateActions.onGlobalStateChange((state: any, prev: any) => {
     // 更新本地状态引用
     currentGlobalState = { ...state };
-    callback(state, prev);
+    callback(state as GlobalState, prev as GlobalState);
   }, true);
 }
 

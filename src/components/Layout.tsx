@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { getGlobalState, setGlobalState, onGlobalStateChange, type GlobalState } from '../config/qiankun';
+import { useAuth } from '../hooks/useAuth';
 import './Layout.css';
 
 /**
@@ -8,17 +9,23 @@ import './Layout.css';
  */
 const Layout: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { auth, logout, initAuth } = useAuth();
   const [globalState, setGlobalStateLocal] = useState<GlobalState>(getGlobalState());
 
   useEffect(() => {
     // 监听全局状态变化
-    const unsubscribe = onGlobalStateChange((state, prev) => {
-      console.log('Global state changed:', state, prev);
+    const unsubscribe = onGlobalStateChange((state) => {
       setGlobalStateLocal(state);
     });
 
     return unsubscribe;
   }, []);
+
+  // 初始化认证状态
+  useEffect(() => {
+    initAuth();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleThemeToggle = () => {
     const newTheme = globalState.theme === 'light' ? 'dark' : 'light';
@@ -26,21 +33,11 @@ const Layout: React.FC = () => {
   };
 
   const handleLogin = () => {
-    setGlobalState({
-      user: {
-        id: '1',
-        name: '管理员',
-        avatar: 'https://via.placeholder.com/32',
-      },
-      token: 'mock-token-123',
-    });
+    navigate('/login');
   };
 
-  const handleLogout = () => {
-    setGlobalState({
-      user: undefined,
-      token: undefined,
-    });
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (
@@ -89,14 +86,14 @@ const Layout: React.FC = () => {
             {globalState.theme === 'light' ? '🌙' : '☀️'}
           </button>
           
-          {globalState.user ? (
+          {auth.isAuthenticated && auth.user ? (
             <div className="user-info">
               <img 
-                src={globalState.user.avatar} 
-                alt={globalState.user.name}
+                src={auth.user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'} 
+                alt={auth.user.name}
                 className="user-avatar"
               />
-              <span className="user-name">{globalState.user.name}</span>
+              <span className="user-name">{auth.user.name}</span>
               <button className="logout-btn" onClick={handleLogout}>
                 退出
               </button>

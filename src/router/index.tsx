@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import Home from '../pages/Home';
+import Login from '../pages/Login';
 import MicroAppContainer from '../components/MicroAppContainer';
 
 /**
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
         element: <MicroAppContainer />,
       },
     ],
+  },
+  {
+    path: '/login',
+    element: <Login />,
   },
 ]);
 
